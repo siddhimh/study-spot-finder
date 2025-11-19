@@ -1,0 +1,25 @@
+{
+  "name": "study-spot-finder",
+  "version": "1.0.0",
+  "description": "Study Spot Finder",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npx tsc",
+    "start": "node dist/server.js",
+    "dev": "npx tsc && nodemon dist/server.js"
+  },
+  "author": "Siddhi Mhatre",
+  "devDependencies": {
+    "@types/express": "^5.0.5",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "body-parser": "^2.2.0",
+    "express": "^5.1.0",
+    "mongoose": "^8.20.0",
+    "nodemon": "^3.1.11",
+    "ts-node": "^10.9.2"
+  }
+}
