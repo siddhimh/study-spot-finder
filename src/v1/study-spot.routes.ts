@@ -15,7 +15,6 @@ appRouter.get('/healthcheck', (req: Request, res: Response) => {
         })
 })
 
-
 appRouter.get('/find', locationServiceController.getLocation);
 
 export default appRouter;

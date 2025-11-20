@@ -2,6 +2,7 @@ import express, { Application } from "express";
 import CONFIGURATION from "./common/config";
 import cors from 'cors';
 import appRouter from "./v1/study-spot.routes";
+import path from "path";
 
 class App {
   private app: Application;
@@ -15,13 +16,18 @@ class App {
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(express.json());
     this.app.use(cors({ origin: true, credentials: true }));
-  
     this.app.use('/study', appRouter);
+
+    this.app.use(express.static(path.join(__dirname, '../../public')));
     
+
+    this.app.get('/{*any}', (req, res) => {
+      res.sendFile(path.join(__dirname, '../../public/index.html'));
+    });
+
     this.app.listen(CONFIGURATION.APP_CONFIG.port, () => {
       console.log(
-        `Application is running at ${
-          CONFIGURATION.APP_CONFIG.port
+        `Application is running at ${CONFIGURATION.APP_CONFIG.port
         } with ${CONFIGURATION.APP_CONFIG.enviroment.toUpperCase()} configuration`
       );
     });

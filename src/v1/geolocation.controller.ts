@@ -17,7 +17,7 @@ class LocationService {
             const now: any = Date.now();
             let data = {};
 
-            const cacheTimestamp = cache.timestamp ? Number(cache.timestamp) : null
+            const cacheTimestamp: any = new Date(Number(cache.timestamp))
 
 
             if (cacheTimestamp && now - cacheTimestamp < 10 * 60 * 1000) {

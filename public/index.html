@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Study Spot Finder</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+    }
+    button {
+      padding: 8px;
+      margin: 5px 0;
+    }
+    ul {
+      margin-top: 20px;
+      list-style: none;
+      padding-left: 0;
+    }
+    li {
+      padding: 5px 0;
+    }
+    .place-name {
+      font-weight: bold;
+    }
+    .place-address {
+      font-size: 0.9em;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <h1>Study Spot Finder</h1>
+
+  <button id="findLocation">Find Study Spots Near Me</button>
+
+  <ul id="results"></ul>
+
+  <script>
+    const findBtn = document.getElementById('findLocation');
+    const resultsList = document.getElementById('results');
+
+    findBtn.addEventListener('click', () => {
+      if (!navigator.geolocation) {
+        alert('Geolocation is not supported by your browser.');
+        return;
+      }
+
+      resultsList.innerHTML = '<li>Getting your location...</li>';
+
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const latitude = position.coords.latitude;
+          const longitude = position.coords.longitude;
+          const timestampMs = Date.now();
+
+          resultsList.innerHTML = '<li>Loading nearby places...</li>';
+
+          try {
+            console.log('hiiii')
+            const res = await fetch(`/study/find?latitude=${latitude}&longitude=${longitude}&timestamp=${timestampMs}`);
+            const data = await res.json();
+
+            console.log('Full API response:', data);
+
+            resultsList.innerHTML = ''; // clear previous
+
+            if (data.suggestions && data.suggestions.length > 0) {
+              data.suggestions.forEach(item => {
+                const li = document.createElement('li');
+                
+                const mainText = item.placePrediction.structuredFormat.mainText.text;
+                const secondaryText = item.placePrediction.structuredFormat.secondaryText.text;
+
+                li.innerHTML = `<span class="place-name">${mainText}</span><br>
+                                <span class="place-address">${secondaryText}</span>`;
+                resultsList.appendChild(li);
+              });
+            } else {
+              resultsList.innerHTML = '<li>No results found</li>';
+            }
+          } catch (err) {
+            console.error('Fetch error:', err);
+            resultsList.innerHTML = `<li>Error fetching results: ${err.message}</li>`;
+          }
+        },
+        (error) => {
+          alert('Unable to get your location. Make sure location services are enabled.');
+          resultsList.innerHTML = '';
+          console.error(error);
+        }
+      );
+    });
+  </script>
+</body>
+</html>
