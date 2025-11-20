@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "Study Spot Finder",
   "main": "server.js",
-  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npx tsc",
@@ -12,11 +11,15 @@
   },
   "author": "Siddhi Mhatre",
   "devDependencies": {
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.5",
     "typescript": "^5.9.3"
   },
   "dependencies": {
+    "axios": "^1.13.2",
     "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "mongoose": "^8.20.0",
     "nodemon": "^3.1.11",
