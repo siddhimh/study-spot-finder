@@ -1,5 +1,5 @@
 import express, { Application } from "express";
-import CONFIGURATION from "./config";
+import CONFIGURATION from "./common/config";
 import cors from 'cors';
 import appRouter from "./v1/study-spot.routes";
 
@@ -11,11 +11,14 @@ class App {
   }
 
   public async run(): Promise<void> {
+
     this.app.use(express.urlencoded({ extended: true }));
-    this.app.use(express.json);
+    this.app.use(express.json());
     this.app.use(cors({ origin: true, credentials: true }));
-    this.app.use(appRouter)
-    this.app.listen(() => {
+  
+    this.app.use('/study', appRouter);
+    
+    this.app.listen(CONFIGURATION.APP_CONFIG.port, () => {
       console.log(
         `Application is running at ${
           CONFIGURATION.APP_CONFIG.port

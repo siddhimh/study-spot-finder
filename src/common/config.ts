@@ -9,7 +9,7 @@ const CONFIGURATION = {
   },
   GOOGLE_MAPS_API: {
     key: process.env.GOOGLE_MAPS_KEY,
-    url: process.env.GOOGLE_MAPS_API
+    url: process.env.GOOGLE_MAPS_URL
   },
   PROXY_SERVER: {
     userProxy: true,
