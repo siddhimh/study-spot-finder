@@ -1,7 +1,7 @@
 import express, { Response, Request } from 'express';
 
-import LocationService from './geolocation.controller';
-import { proxy } from '../common/app.utility';
+import LocationService from '../controller/geolocation.controller';
+import { proxy } from '../../common/app.utility';
 
 
 const locationServiceController = proxy(new LocationService());

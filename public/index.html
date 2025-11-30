@@ -1,96 +1,102 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Study Spot Finder</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 40px;
-    }
-    button {
-      padding: 8px;
-      margin: 5px 0;
-    }
-    ul {
-      margin-top: 20px;
-      list-style: none;
-      padding-left: 0;
-    }
-    li {
-      padding: 5px 0;
-    }
-    .place-name {
-      font-weight: bold;
-    }
-    .place-address {
-      font-size: 0.9em;
-      color: #555;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>Cafe Finder</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #f5f5f5; }
+        .container { display: flex; flex-wrap: wrap; gap: 20px; margin-top: 20px; }
+        .card {
+            width: 280px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+        }
+        .card img { width: 100%; height: 170px; object-fit: cover; }
+        .card-body { padding: 12px; }
+        .card-title { font-size: 16px; font-weight: bold; margin-bottom: 10px; }
+        .open-btn {
+            display: inline-block;
+            padding: 8px 12px;
+            background: #4285F4;
+            color: white;
+            border-radius: 6px;
+            text-decoration: none;
+        }
+        #loadButton {
+            padding: 10px 20px;
+            font-size: 16px;
+            background: #34A853;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        #loadButton:hover { background: #2c8c46; }
+    </style>
 </head>
 <body>
-  <h1>Study Spot Finder</h1>
 
-  <button id="findLocation">Find Study Spots Near Me</button>
+<h2>Nearby Study Spots</h2>
+<button id="loadButton">Find Nearby Study Spots</button>
+<div id="spots" class="container"></div>
 
-  <ul id="results"></ul>
+<script>
+async function loadSpots() {
+    const spotsContainer = document.getElementById("spots");
+    spotsContainer.innerHTML = ""; // Clear previous results
 
-  <script>
-    const findBtn = document.getElementById('findLocation');
-    const resultsList = document.getElementById('results');
-
-    findBtn.addEventListener('click', () => {
-      if (!navigator.geolocation) {
-        alert('Geolocation is not supported by your browser.');
+    // Check if browser supports geolocation
+    if (!navigator.geolocation) {
+        alert("Geolocation is not supported by your browser");
         return;
-      }
+    }
 
-      resultsList.innerHTML = '<li>Getting your location...</li>';
+    navigator.geolocation.getCurrentPosition(async (position) => {
+        const lat = position.coords.latitude;
+        const long = position.coords.longitude;
+        const timestamp = Date.now();
 
-      navigator.geolocation.getCurrentPosition(
-        async (position) => {
-          const latitude = position.coords.latitude;
-          const longitude = position.coords.longitude;
-          const timestampMs = Date.now();
-
-          resultsList.innerHTML = '<li>Loading nearby places...</li>';
-
-          try {
-            console.log('hiiii')
-            const res = await fetch(`/study/find?latitude=${latitude}&longitude=${longitude}&timestamp=${timestampMs}`);
+        try {
+            const res = await fetch(
+                `http://localhost:3000/study/find?latitude=${lat}&longitude=${long}&timestamp=${timestamp}`
+            );
             const data = await res.json();
 
-            console.log('Full API response:', data);
-
-            resultsList.innerHTML = ''; // clear previous
-
-            if (data.suggestions && data.suggestions.length > 0) {
-              data.suggestions.forEach(item => {
-                const li = document.createElement('li');
-                
-                const mainText = item.placePrediction.structuredFormat.mainText.text;
-                const secondaryText = item.placePrediction.structuredFormat.secondaryText.text;
-
-                li.innerHTML = `<span class="place-name">${mainText}</span><br>
-                                <span class="place-address">${secondaryText}</span>`;
-                resultsList.appendChild(li);
-              });
-            } else {
-              resultsList.innerHTML = '<li>No results found</li>';
+            if (!data.data || !data.data.places.length) {
+                spotsContainer.innerHTML = "<p>No study spots found nearby.</p>";
+                return;
             }
-          } catch (err) {
-            console.error('Fetch error:', err);
-            resultsList.innerHTML = `<li>Error fetching results: ${err.message}</li>`;
-          }
-        },
-        (error) => {
-          alert('Unable to get your location. Make sure location services are enabled.');
-          resultsList.innerHTML = '';
-          console.error(error);
+
+            data.data.places.forEach(spot => {
+                const placeId = spot.location.replace("places/", "");
+                const cardHTML = `
+                    <div class="card">
+                        <img src="https://via.placeholder.com/400x250?text=Study+Spot" alt="${spot.name}">
+                        <div class="card-body">
+                            <div class="card-title">${spot.name}</div>
+                            <a class="open-btn" href="https://www.google.com/maps/place/?q=place_id:${placeId}" target="_blank">Open in Google Maps</a>
+                        </div>
+                    </div>
+                `;
+                spotsContainer.innerHTML += cardHTML;
+            });
+
+        } catch (err) {
+            console.error(err);
+            spotsContainer.innerHTML = "<p>Error fetching study spots</p>";
         }
-      );
+
+    }, (error) => {
+        console.error(error);
+        spotsContainer.innerHTML = "<p>Unable to retrieve your location</p>";
     });
-  </script>
+}
+
+// Attach button click event
+document.getElementById("loadButton").addEventListener("click", loadSpots);
+</script>
+
 </body>
 </html>

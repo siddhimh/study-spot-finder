@@ -1,7 +1,7 @@
 import express, { Application } from "express";
 import CONFIGURATION from "./common/config";
 import cors from 'cors';
-import appRouter from "./v1/study-spot.routes";
+import appRouter from "./v1/routes/study-spot.routes";
 import path from "path";
 
 class App {
@@ -35,3 +35,9 @@ class App {
 }
 
 export default App;
+
+
+//rate limitter to add
+//redis caching
+//joi validation
+//middleware
