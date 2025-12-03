@@ -56,8 +56,10 @@ class LocationService {
 
       dataResponse.places = apiResponse.map((ele: any) => {
         return {
-          location: ele?.placePrediction?.place,
-          name: ele?.placePrediction?.text?.text,
+          name: ele?.displayName?.text,
+          photo: ele?.photos[0]?.googleMapsUri,
+          rating: ele?.rating,
+          price: ele?.priceLevel
         };
       });
 
@@ -75,9 +77,8 @@ class LocationService {
   public async axiosCall(lat: any, long: any): Promise<any> {
     try {
       const body: any = {
-        input: "study",
-        types: ["Café", "Library", "Coworking space", "University"],
-        locationBias: {
+        includedTypes: ["cafe"],
+        locationRestriction: {
           circle: {
             center: {
               latitude: lat,
@@ -93,10 +94,11 @@ class LocationService {
         headers: {
           "Content-Type": "application/json",
           "X-Goog-Api-Key": CONFIGURATION.GOOGLE_MAPS_API.key,
-        },
+          "X-Goog-FieldMask": "places.displayName,places.photos,places.rating,places.priceLevel"
+       },
         httpsAgent: new https.Agent({ rejectUnauthorized: false }),
       });
-      return Promise.resolve(axiosResponse.data.suggestions);
+      return Promise.resolve(axiosResponse.data.places);
     } catch (error: any) {
       return Promise.reject(error);
     }

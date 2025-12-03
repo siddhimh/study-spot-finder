@@ -4,7 +4,7 @@ dotenv.config();
 const CONFIGURATION = {
   APP_CONFIG: {
     enviroment: "local",
-    name: "study-spot-finder",
+    name: "cafe-finder",
     port: 3000,
   },
   GOOGLE_MAPS_API: {

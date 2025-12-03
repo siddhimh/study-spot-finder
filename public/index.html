@@ -15,7 +15,8 @@
         }
         .card img { width: 100%; height: 170px; object-fit: cover; }
         .card-body { padding: 12px; }
-        .card-title { font-size: 16px; font-weight: bold; margin-bottom: 10px; }
+        .card-title { font-size: 16px; font-weight: bold; margin-bottom: 6px; }
+        .card-info { font-size: 14px; margin-bottom: 6px; }
         .open-btn {
             display: inline-block;
             padding: 8px 12px;
@@ -38,8 +39,8 @@
 </head>
 <body>
 
-<h2>Nearby Study Spots</h2>
-<button id="loadButton">Find Nearby Study Spots</button>
+<h2>Nearby Cafes</h2>
+<button id="loadButton">Find Nearby Cafes</button>
 <div id="spots" class="container"></div>
 
 <script>
@@ -47,7 +48,6 @@ async function loadSpots() {
     const spotsContainer = document.getElementById("spots");
     spotsContainer.innerHTML = ""; // Clear previous results
 
-    // Check if browser supports geolocation
     if (!navigator.geolocation) {
         alert("Geolocation is not supported by your browser");
         return;
@@ -65,18 +65,23 @@ async function loadSpots() {
             const data = await res.json();
 
             if (!data.data || !data.data.places.length) {
-                spotsContainer.innerHTML = "<p>No study spots found nearby.</p>";
+                spotsContainer.innerHTML = "<p>No cafes found nearby.</p>";
                 return;
             }
 
             data.data.places.forEach(spot => {
-                const placeId = spot.location.replace("places/", "");
+                const placeId = spot.location ? spot.location.replace("places/", "") : "";
+                const photoURL = spot.photo || "https://via.placeholder.com/400x250?text=Cafe";
+                const rating = spot.rating ? `⭐ ${spot.rating}` : "No rating";
+                const price = spot.price || "";
+
                 const cardHTML = `
                     <div class="card">
-                        <img src="https://via.placeholder.com/400x250?text=Study+Spot" alt="${spot.name}">
+                        <img src="${photoURL}" alt="${spot.name}">
                         <div class="card-body">
                             <div class="card-title">${spot.name}</div>
-                            <a class="open-btn" href="https://www.google.com/maps/place/?q=place_id:${placeId}" target="_blank">Open in Google Maps</a>
+                            <div class="card-info">${rating} ${price}</div>
+                            ${placeId ? `<a class="open-btn" href="https://www.google.com/maps/place/?q=place_id:${placeId}" target="_blank">Open in Google Maps</a>` : ""}
                         </div>
                     </div>
                 `;
@@ -85,7 +90,7 @@ async function loadSpots() {
 
         } catch (err) {
             console.error(err);
-            spotsContainer.innerHTML = "<p>Error fetching study spots</p>";
+            spotsContainer.innerHTML = "<p>Error fetching cafes</p>";
         }
 
     }, (error) => {
@@ -94,7 +99,6 @@ async function loadSpots() {
     });
 }
 
-// Attach button click event
 document.getElementById("loadButton").addEventListener("click", loadSpots);
 </script>
 
