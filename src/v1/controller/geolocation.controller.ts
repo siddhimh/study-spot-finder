@@ -2,6 +2,8 @@ import CONFIGURATION from "../../common/config";
 import axios from "axios";
 import { Request, Response, NextFunction } from "express";
 import https from "node:https";
+import fs from 'fs';
+import path from 'path';
 
 // interface GeoCoordinates {
 //   latitude: number;
@@ -54,14 +56,27 @@ class LocationService {
         }
       }
 
-      dataResponse.places = apiResponse.map((ele: any) => {
+
+      const restu = await Promise.allSettled(apiResponse.map(async (ele: any) => {
+
+        let x: any = await this.axioscall2(ele.photos[0].name);
+        const imagesDir = path.join(process.cwd(), "images");
+
+         if (!fs.existsSync(imagesDir)) { fs.mkdirSync(imagesDir); }
+           
+        const safeName = ele?.displayName?.text.replace(/[^A-Z0-9]+/ig, "_");
+        fs.writeFileSync( path.join(imagesDir, `${safeName}.png`), x);
+        
         return {
           name: ele?.displayName?.text,
-          photo: ele?.photos[0]?.googleMapsUri,
+          photo: `/images/${safeName}.png`,
           rating: ele?.rating,
-          price: ele?.priceLevel
+          // price: ele?.priceLevel
         };
-      });
+      }));
+
+    dataResponse.places=  restu.filter(r => r.status== "fulfilled").map(r => r.value)
+
 
       const jsonResponse = {
         status: 200,
@@ -102,6 +117,28 @@ class LocationService {
     } catch (error: any) {
       return Promise.reject(error);
     }
+  }
+
+
+  public async axioscall2(photoRef: any): Promise<any>{
+try{
+
+
+      const url: any = `${CONFIGURATION.GOOGLE_MAPS_API.photos_url}/${photoRef}/media`;
+      const axiosResponse = await axios.get(url,  {
+        params: {
+          key: CONFIGURATION.GOOGLE_MAPS_API.key,
+          max_height_px: 1024
+       },
+        httpsAgent: new https.Agent({ rejectUnauthorized: false }),
+        responseType: 'arraybuffer'
+      });
+      const imageBuffer = Buffer.from(axiosResponse.data)
+      return Promise.resolve(imageBuffer);
+}
+catch(error: any){
+   return Promise.reject(error)
+}
   }
 }
 

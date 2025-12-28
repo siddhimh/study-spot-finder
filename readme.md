@@ -5,6 +5,7 @@
 5. Dynamic Map + Card Integration
 6. Review Sentiment Analysis
 
+Cache results — don’t call the API on every page load if not needed (especially for photos or repeated queries).
 
 7. b Group Meetup Planning
 
@@ -27,3 +28,7 @@ Example:
 Input: User1 (lat1, long1), User2 (lat2, long2)
 
 Output: Top 3 cafes near midpoint with rating > 4
+
+
+Swagger 
+Stripe

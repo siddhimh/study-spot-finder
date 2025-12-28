@@ -1,8 +1,7 @@
-  {
-      "watch": ["src", "server.ts"],
-      "ext": "ts",
-      "execMap": {
-        "ts": "ts-node server.ts"
-      }
-    }
-    
+{
+  "watch": ["src", "server.ts", "public"],
+  "ext": "ts html",
+  "execMap": {
+    "ts": "ts-node server.ts"
+  }
+}

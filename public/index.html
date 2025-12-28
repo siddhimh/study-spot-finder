@@ -60,7 +60,7 @@ async function loadSpots() {
 
         try {
             const res = await fetch(
-                `http://localhost:3000/study/find?latitude=${lat}&longitude=${long}&timestamp=${timestamp}`
+                `http://localhost:3000/place/find?latitude=${lat}&longitude=${long}&timestamp=${timestamp}`
             );
             const data = await res.json();
 
@@ -68,25 +68,44 @@ async function loadSpots() {
                 spotsContainer.innerHTML = "<p>No cafes found nearby.</p>";
                 return;
             }
-
+            
             data.data.places.forEach(spot => {
-                const placeId = spot.location ? spot.location.replace("places/", "") : "";
-                const photoURL = spot.photo || "https://via.placeholder.com/400x250?text=Cafe";
-                const rating = spot.rating ? `⭐ ${spot.rating}` : "No rating";
-                const price = spot.price || "";
+    const placeId = spot.id || "";
+    const lat = spot.location?.latitude;
+    const lng = spot.location?.longitude;
 
-                const cardHTML = `
-                    <div class="card">
-                        <img src="${photoURL}" alt="${spot.name}">
-                        <div class="card-body">
-                            <div class="card-title">${spot.name}</div>
-                            <div class="card-info">${rating} ${price}</div>
-                            ${placeId ? `<a class="open-btn" href="https://www.google.com/maps/place/?q=place_id:${placeId}" target="_blank">Open in Google Maps</a>` : ""}
-                        </div>
-                    </div>
-                `;
-                spotsContainer.innerHTML += cardHTML;
-            });
+    // Maps Deep Link (placeId preferred, fallback lat/lng)
+    let mapsURL = "";
+    if (placeId) {
+        mapsURL = `https://www.google.com/maps/search/?api=1&query_place_id=${placeId}`;
+    } else if (lat && lng) {
+        mapsURL = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+    }
+
+    // Photo
+    const photoURL = spot.photo || "https://via.placeholder.com/400x250?text=Cafe";
+
+    // Rating
+    const rating = spot.rating ? `⭐ ${spot.rating}` : "No rating";
+
+    const cardHTML = `
+        <div class="card">
+            <img src="${photoURL}" alt="${spot.name}">
+            <div class="card-body">
+                <div class="card-title">${spot.name}</div>
+                <div class="card-info">${rating}</div>
+                ${
+                    mapsURL
+                        ? `<a class="open-btn" href="${mapsURL}" target="_blank">Open in Google Maps</a>`
+                        : ""
+                }
+            </div>
+        </div>
+    `;
+
+    spotsContainer.innerHTML += cardHTML;
+});
+
 
         } catch (err) {
             console.error(err);

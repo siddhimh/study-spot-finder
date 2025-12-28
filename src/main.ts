@@ -16,10 +16,11 @@ class App {
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(express.json());
     this.app.use(cors({ origin: true, credentials: true }));
-    this.app.use('/study', appRouter);
+    this.app.use('/place', appRouter);
 
     this.app.use(express.static(path.join(__dirname, '../../public')));
-    
+    this.app.use("/images", express.static(path.join(process.cwd(), "images"))
+);
 
     this.app.get('/{*any}', (req, res) => {
       res.sendFile(path.join(__dirname, '../../public/index.html'));
