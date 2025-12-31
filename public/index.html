@@ -3,53 +3,258 @@
 <head>
     <meta charset="UTF-8">
     <title>Cafe Finder</title>
+
     <style>
-        body { font-family: Arial; padding: 20px; background: #f5f5f5; }
-        .container { display: flex; flex-wrap: wrap; gap: 20px; margin-top: 20px; }
-        .card {
-            width: 280px;
-            background: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+        :root {
+            --accent: #1e7f4f;
+            --accent-dark: #16643e;
+            --text-main: #0f1f17;
+            --text-muted: #5f6f68;
+            --card-bg: #ffffff;
+            --card-border: #e2efe7;
+            --box-bg: #f2faf5;
+            --box-border: #c7e4d3;
         }
-        .card img { width: 100%; height: 170px; object-fit: cover; }
-        .card-body { padding: 12px; }
-        .card-title { font-size: 16px; font-weight: bold; margin-bottom: 6px; }
-        .card-info { font-size: 14px; margin-bottom: 6px; }
-        .open-btn {
-            display: inline-block;
-            padding: 8px 12px;
-            background: #4285F4;
-            color: white;
-            border-radius: 6px;
-            text-decoration: none;
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: Inter, Arial, sans-serif;
+            padding: 24px;
+            background: #ffffff;
+            color: var(--text-main);
         }
+
+        h2 {
+            color: var(--text-main);
+            margin-bottom: 8px;
+        }
+
         #loadButton {
             padding: 10px 20px;
-            font-size: 16px;
-            background: #34A853;
+            font-size: 15px;
+            background: var(--accent);
             color: white;
             border: none;
-            border-radius: 6px;
+            border-radius: 999px;
+            cursor: pointer;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            box-shadow: 0 8px 18px rgba(12, 77, 46, 0.35);
+            transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+        }
+
+        #loadButton:hover {
+            background: var(--accent-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 12px 26px rgba(8, 58, 35, 0.45);
+        }
+
+        #loadButton:active {
+            transform: translateY(0);
+            box-shadow: 0 6px 14px rgba(8, 58, 35, 0.35);
+        }
+
+        .spots-wrapper {
+            margin-top: 24px;
+            margin-inline: 8px;
+            padding: 18px 18px 20px;
+            background: var(--box-bg);
+            border-radius: 18px;
+            border: 1px solid var(--box-border);
+        }
+
+        .spots-wrapper.hidden { display: none; }
+
+        .spots-title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .spots-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 20px;
+        }
+
+        @media (max-width: 1200px) {
+            .container { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        }
+        @media (max-width: 900px) {
+            .container { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+        @media (max-width: 600px) {
+            .container { grid-template-columns: minmax(0, 1fr); }
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 14px;
+            overflow: hidden;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.04);
+            transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
             cursor: pointer;
         }
-        #loadButton:hover { background: #2c8c46; }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 14px 28px rgba(0,0,0,0.10);
+            border-color: #a7d5bf;
+        }
+
+        .card img {
+            width: 100%;
+            height: 170px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .card-body {
+            padding: 14px 14px 13px;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .card-info {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 8px 10px;
+            font-size: 13px;
+            border-radius: 999px;
+            text-decoration: none;
+            font-weight: 500;
+            text-align: center;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            border: 1px solid #d1ded6;
+            transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease, transform 0.14s ease;
+        }
+
+        .directions-btn {
+            background: var(--accent);
+            color: #ffffff;
+            border-color: var(--accent);
+        }
+
+        .directions-btn:hover {
+            background: var(--accent-dark);
+            border-color: var(--accent-dark);
+            transform: translateY(-1px);
+        }
+
+        .website-btn {
+            background: #0f1f17;
+            color: #ffffff;
+            border-color: #0f1f17;
+        }
+
+        .website-btn:hover {
+            background: #000000;
+            border-color: #000000;
+            transform: translateY(-1px);
+        }
+
+        .btn-disabled {
+            opacity: 0.35;
+            pointer-events: none;
+        }
+
+        .card-empty-message {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-top: 8px;
+        }
     </style>
 </head>
+
 <body>
 
 <h2>Nearby Cafes</h2>
 <button id="loadButton">Find Nearby Cafes</button>
-<div id="spots" class="container"></div>
+
+<div id="spotsBox" class="spots-wrapper hidden">
+    <div class="spots-title-row">
+        <div class="spots-title">Best Visited Cafes</div>
+    </div>
+    <div id="spots" class="container"></div>
+</div>
 
 <script>
+// example: generic tracking API
+async function trackClick(type, spot) {
+    try {
+        await fetch("http://localhost:3000/place/click", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                type,                 // "card", "directions", "website"
+                placeId: spot.id,
+                name: spot.name,
+                timestamp: Date.now()
+            })
+        });
+    } catch (e) {
+        console.error("tracking error", e);
+    }
+}
+
+// example: insights API when card is clicked
+async function openCard(spot) {
+    try {
+        await fetch("http://localhost:3000/place/click", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                placeId: spot.id,
+                name: spot.name,
+                timestamp: Date.now()
+            })
+        });
+
+        // after insights call, you can open a detail page if you have one
+        // window.location.href = `/places/${spot.id}`;
+    } catch (e) {
+        console.error("insights error", e);
+    }
+}
+
 async function loadSpots() {
     const spotsContainer = document.getElementById("spots");
-    spotsContainer.innerHTML = ""; // Clear previous results
+    const spotsBox = document.getElementById("spotsBox");
+    spotsContainer.innerHTML = "";
+    spotsBox.classList.remove("hidden");
 
     if (!navigator.geolocation) {
-        alert("Geolocation is not supported by your browser");
+        alert("Geolocation not supported");
         return;
     }
 
@@ -62,59 +267,88 @@ async function loadSpots() {
             const res = await fetch(
                 `http://localhost:3000/place/find?latitude=${lat}&longitude=${long}&timestamp=${timestamp}`
             );
+
             const data = await res.json();
 
             if (!data.data || !data.data.places.length) {
-                spotsContainer.innerHTML = "<p>No cafes found nearby.</p>";
+                spotsContainer.innerHTML = '<p class="card-empty-message">No cafes found nearby.</p>';
                 return;
             }
-            
+
             data.data.places.forEach(spot => {
-    const placeId = spot.id || "";
-    const lat = spot.location?.latitude;
-    const lng = spot.location?.longitude;
+                const placeId = spot.id || "";
+                const spotLat = spot.location?.latitude;
+                const spotLng = spot.location?.longitude;
 
-    // Maps Deep Link (placeId preferred, fallback lat/lng)
-    let mapsURL = "";
-    if (placeId) {
-        mapsURL = `https://www.google.com/maps/search/?api=1&query_place_id=${placeId}`;
-    } else if (lat && lng) {
-        mapsURL = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
-    }
-
-    // Photo
-    const photoURL = spot.photo || "https://via.placeholder.com/400x250?text=Cafe";
-
-    // Rating
-    const rating = spot.rating ? `⭐ ${spot.rating}` : "No rating";
-
-    const cardHTML = `
-        <div class="card">
-            <img src="${photoURL}" alt="${spot.name}">
-            <div class="card-body">
-                <div class="card-title">${spot.name}</div>
-                <div class="card-info">${rating}</div>
-                ${
-                    mapsURL
-                        ? `<a class="open-btn" href="${mapsURL}" target="_blank">Open in Google Maps</a>`
-                        : ""
+                let mapsURL = "";
+                if (placeId) {
+                    mapsURL = `https://www.google.com/maps/search/?api=1&query_place_id=${placeId}`;
+                } else if (spotLat && spotLng) {
+                    mapsURL = `https://www.google.com/maps/search/?api=1&query=${spotLat},${spotLng}`;
                 }
-            </div>
-        </div>
-    `;
 
-    spotsContainer.innerHTML += cardHTML;
-});
+                const photoURL = spot.photo || "https://via.placeholder.com/400x250?text=Cafe";
+                const rating = spot.rating ? `⭐ ${spot.rating}` : "No rating";
+                const websiteURL = spot.website || "";
 
+                const directionsClass = mapsURL ? "action-btn directions-btn" : "action-btn directions-btn btn-disabled";
+                const websiteClass = websiteURL ? "action-btn website-btn" : "action-btn website-btn btn-disabled";
+
+                // create card as DOM so we can attach listeners
+                const card = document.createElement("div");
+                card.className = "card";
+
+                card.innerHTML = `
+                    <img src="${photoURL}" alt="${spot.name}">
+                    <div class="card-body">
+                        <div class="card-title">${spot.name}</div>
+                        <div class="card-info">${rating}</div>
+                        <div class="card-actions">
+                            <a class="${directionsClass}">Directions</a>
+                            <a class="${websiteClass}">Website</a>
+                        </div>
+                    </div>
+                `;
+
+                // card click -> insights + maybe details
+                card.addEventListener("click", async (e) => {
+                    // avoid triggering when clicking buttons (they have own handlers)
+                    if (e.target.closest(".action-btn")) return;
+                    await trackClick("card", spot);
+                    await openCard(spot);
+                });
+
+                // directions click
+                const directionsBtn = card.querySelector(".directions-btn");
+                if (directionsBtn && mapsURL) {
+                    directionsBtn.addEventListener("click", async (e) => {
+                        e.stopPropagation();
+                        await trackClick("directions", spot);
+                        window.open(mapsURL, "_blank", "noopener");
+                    });
+                }
+
+                // website click
+                const websiteBtn = card.querySelector(".website-btn");
+                if (websiteBtn && websiteURL) {
+                    websiteBtn.addEventListener("click", async (e) => {
+                        e.stopPropagation();
+                        await trackClick("website", spot);
+                        window.open(websiteURL, "_blank", "noopener");
+                    });
+                }
+
+                spotsContainer.appendChild(card);
+            });
 
         } catch (err) {
             console.error(err);
-            spotsContainer.innerHTML = "<p>Error fetching cafes</p>";
+            spotsContainer.innerHTML = '<p class="card-empty-message">Error fetching cafes.</p>';
         }
 
-    }, (error) => {
-        console.error(error);
-        spotsContainer.innerHTML = "<p>Unable to retrieve your location</p>";
+    }, () => {
+        spotsContainer.innerHTML = '<p class="card-empty-message">Unable to retrieve your location.</p>';
+        spotsBox.classList.remove("hidden");
     });
 }
 

@@ -3,13 +3,19 @@ import CONFIGURATION from "./common/config";
 import cors from 'cors';
 import appRouter from "./v1/routes/study-spot.routes";
 import path from "path";
+import DbConnection from "./common/db-connection";
 
 class App {
   private app: Application;
+  private readonly dbConnection: DbConnection;
+
 
   constructor() {
-    this.app = express();
+    this.app = express();    
+    this.dbConnection= new DbConnection();
   }
+
+ 
 
   public async run(): Promise<void> {
 
@@ -17,10 +23,11 @@ class App {
     this.app.use(express.json());
     this.app.use(cors({ origin: true, credentials: true }));
     this.app.use('/place', appRouter);
+    await this.dbConnection.connectDB();
 
     this.app.use(express.static(path.join(__dirname, '../../public')));
     this.app.use("/images", express.static(path.join(process.cwd(), "images"))
-);
+    );
 
     this.app.get('/{*any}', (req, res) => {
       res.sendFile(path.join(__dirname, '../../public/index.html'));
@@ -32,7 +39,18 @@ class App {
         } with ${CONFIGURATION.APP_CONFIG.enviroment.toUpperCase()} configuration`
       );
     });
+
+    process.on('SIGINT', async () => {
+      
+      const x: any= await this.dbConnection.connectDB();
+      await x.end();
+      console.log('Closing DB pool...');
+      process.exit(0);
+    });
+    
   }
+
+ 
 }
 
 export default App;

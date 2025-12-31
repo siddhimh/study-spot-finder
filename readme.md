@@ -32,3 +32,10 @@ Output: Top 3 cafes near midpoint with rating > 4
 
 Swagger 
 Stripe
+
+
+
+
+1. Find API
+just getting photos and little details currently
+want it to add (website of location + redirect to maps)

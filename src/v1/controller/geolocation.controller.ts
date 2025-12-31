@@ -5,10 +5,6 @@ import https from "node:https";
 import fs from 'fs';
 import path from 'path';
 
-// interface GeoCoordinates {
-//   latitude: number;
-//   longitude: number;
-// }
 
 class LocationService {
   constructor() {}
