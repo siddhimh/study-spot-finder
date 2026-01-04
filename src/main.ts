@@ -4,15 +4,18 @@ import cors from 'cors';
 import appRouter from "./v1/routes/study-spot.routes";
 import path from "path";
 import DbConnection from "./common/db-connection";
+import Scheduler from "./common/scheduler";
 
 class App {
   private app: Application;
   private readonly dbConnection: DbConnection;
+  private readonly scheduler: Scheduler;
 
 
   constructor() {
     this.app = express();    
     this.dbConnection= new DbConnection();
+    this.scheduler = new Scheduler();
   }
 
  
@@ -24,6 +27,7 @@ class App {
     this.app.use(cors({ origin: true, credentials: true }));
     this.app.use('/place', appRouter);
     await this.dbConnection.connectDB();
+    await this.scheduler.placeActivity();
 
     this.app.use(express.static(path.join(__dirname, '../../public')));
     this.app.use("/images", express.static(path.join(process.cwd(), "images"))

@@ -39,3 +39,19 @@ Stripe
 1. Find API
 just getting photos and little details currently
 want it to add (website of location + redirect to maps)
+
+
+1. Find API
+--> getting details of place nearby
+--> getting photo of the place
+--> saving place_id in db for analytics
+--> getting direction and website urls from nearby api
+
+
+
+2. Scheduler
+--> get reviews from last 24 hrs (store review db)
+--> get photo from last 24 hrs (store photo db)
+--> updating analytics every 24 hrs (analytics db)
+
+3. App Activity api

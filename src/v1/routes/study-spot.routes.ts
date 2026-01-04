@@ -2,7 +2,7 @@ import express, { Response, Request } from 'express';
 
 import LocationService from '../controller/geolocation.controller';
 import AppActivity from '../controller/app-activity.controller';
-import RealTimeCrowd from '../controller/crowd.controller';
+import RealTimeCrowd from '../controller/crowd-analytics.controller';
 import { proxy } from '../../common/app.utility';
 
 

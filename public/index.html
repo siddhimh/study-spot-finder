@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Cafe Finder</title>
@@ -26,39 +26,31 @@
         }
 
         h2 {
-            color: var(--text-main);
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
 
         #loadButton {
-            padding: 10px 20px;
+            padding: 10px 22px;
             font-size: 15px;
             background: var(--accent);
-            color: white;
+            color: #fff;
             border: none;
             border-radius: 999px;
             cursor: pointer;
             font-weight: 600;
-            letter-spacing: 0.02em;
-            box-shadow: 0 8px 18px rgba(12, 77, 46, 0.35);
-            transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+            box-shadow: 0 8px 18px rgba(12,77,46,0.35);
+            transition: all 0.2s ease;
         }
 
         #loadButton:hover {
             background: var(--accent-dark);
             transform: translateY(-1px);
-            box-shadow: 0 12px 26px rgba(8, 58, 35, 0.45);
-        }
-
-        #loadButton:active {
-            transform: translateY(0);
-            box-shadow: 0 6px 14px rgba(8, 58, 35, 0.35);
+            box-shadow: 0 12px 26px rgba(8,58,35,0.45);
         }
 
         .spots-wrapper {
             margin-top: 24px;
-            margin-inline: 8px;
-            padding: 18px 18px 20px;
+            padding: 18px;
             background: var(--box-bg);
             border-radius: 18px;
             border: 1px solid var(--box-border);
@@ -66,17 +58,10 @@
 
         .spots-wrapper.hidden { display: none; }
 
-        .spots-title-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
         .spots-title {
             font-size: 17px;
             font-weight: 600;
-            color: var(--text-main);
+            margin-bottom: 14px;
         }
 
         .container {
@@ -86,13 +71,13 @@
         }
 
         @media (max-width: 1200px) {
-            .container { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+            .container { grid-template-columns: repeat(3, 1fr); }
         }
         @media (max-width: 900px) {
-            .container { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .container { grid-template-columns: repeat(2, 1fr); }
         }
         @media (max-width: 600px) {
-            .container { grid-template-columns: minmax(0, 1fr); }
+            .container { grid-template-columns: 1fr; }
         }
 
         .card {
@@ -101,14 +86,12 @@
             overflow: hidden;
             border: 1px solid var(--card-border);
             box-shadow: 0 6px 18px rgba(0,0,0,0.04);
-            transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
-            cursor: pointer;
+            transition: transform 0.22s ease, box-shadow 0.22s ease;
         }
 
         .card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 14px 28px rgba(0,0,0,0.10);
-            border-color: #a7d5bf;
+            box-shadow: 0 14px 28px rgba(0,0,0,0.1);
         }
 
         .card img {
@@ -119,17 +102,16 @@
         }
 
         .card-body {
-            padding: 14px 14px 13px;
+            padding: 14px;
         }
 
         .card-title {
             font-size: 16px;
             font-weight: 600;
-            color: var(--text-main);
-            margin-bottom: 4px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            margin-bottom: 4px;
         }
 
         .card-info {
@@ -151,36 +133,31 @@
             text-decoration: none;
             font-weight: 500;
             text-align: center;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            border: 1px solid #d1ded6;
-            transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease, transform 0.14s ease;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: all 0.18s ease;
         }
 
         .directions-btn {
             background: var(--accent);
-            color: #ffffff;
+            color: white;
             border-color: var(--accent);
         }
 
         .directions-btn:hover {
             background: var(--accent-dark);
             border-color: var(--accent-dark);
-            transform: translateY(-1px);
         }
 
         .website-btn {
             background: #0f1f17;
-            color: #ffffff;
+            color: white;
             border-color: #0f1f17;
         }
 
         .website-btn:hover {
-            background: #000000;
-            border-color: #000000;
-            transform: translateY(-1px);
+            background: #000;
+            border-color: #000;
         }
 
         .btn-disabled {
@@ -188,10 +165,9 @@
             pointer-events: none;
         }
 
-        .card-empty-message {
-            color: var(--text-muted);
+        .empty-message {
             font-size: 14px;
-            margin-top: 8px;
+            color: var(--text-muted);
         }
     </style>
 </head>
@@ -202,54 +178,30 @@
 <button id="loadButton">Find Nearby Cafes</button>
 
 <div id="spotsBox" class="spots-wrapper hidden">
-    <div class="spots-title-row">
-        <div class="spots-title">Best Visited Cafes</div>
-    </div>
+    <div class="spots-title">Best Visited Cafes</div>
     <div id="spots" class="container"></div>
 </div>
 
 <script>
-// example: generic tracking API
-async function trackClick(type, spot) {
+async function trackClick(action, spot) {
     try {
-        await fetch("http://localhost:3000/place/click", {
+        fetch("http://localhost:3000/place/click", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                type,                 // "card", "directions", "website"
-                placeId: spot.id,
-                name: spot.name,
-                timestamp: Date.now()
+                action,
+                place_id: spot.id,
             })
         });
     } catch (e) {
-        console.error("tracking error", e);
+        console.error("Tracking failed", e);
     }
 }
 
-// example: insights API when card is clicked
-async function openCard(spot) {
-    try {
-        await fetch("http://localhost:3000/place/click", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                placeId: spot.id,
-                name: spot.name,
-                timestamp: Date.now()
-            })
-        });
-
-        // after insights call, you can open a detail page if you have one
-        // window.location.href = `/places/${spot.id}`;
-    } catch (e) {
-        console.error("insights error", e);
-    }
-}
-
-async function loadSpots() {
+function loadSpots() {
     const spotsContainer = document.getElementById("spots");
     const spotsBox = document.getElementById("spotsBox");
+
     spotsContainer.innerHTML = "";
     spotsBox.classList.remove("hidden");
 
@@ -259,42 +211,26 @@ async function loadSpots() {
     }
 
     navigator.geolocation.getCurrentPosition(async (position) => {
-        const lat = position.coords.latitude;
-        const long = position.coords.longitude;
+        const { latitude, longitude } = position.coords;
         const timestamp = Date.now();
 
         try {
             const res = await fetch(
-                `http://localhost:3000/place/find?latitude=${lat}&longitude=${long}&timestamp=${timestamp}`
+                `http://localhost:3000/place/find?latitude=${latitude}&longitude=${longitude}&timestamp=${timestamp}`
             );
-
             const data = await res.json();
 
-            if (!data.data || !data.data.places.length) {
-                spotsContainer.innerHTML = '<p class="card-empty-message">No cafes found nearby.</p>';
+            if (!data?.data?.places?.length) {
+                spotsContainer.innerHTML = '<p class="empty-message">No cafes found nearby.</p>';
                 return;
             }
 
             data.data.places.forEach(spot => {
-                const placeId = spot.id || "";
-                const spotLat = spot.location?.latitude;
-                const spotLng = spot.location?.longitude;
-
-                let mapsURL = "";
-                if (placeId) {
-                    mapsURL = `https://www.google.com/maps/search/?api=1&query_place_id=${placeId}`;
-                } else if (spotLat && spotLng) {
-                    mapsURL = `https://www.google.com/maps/search/?api=1&query=${spotLat},${spotLng}`;
-                }
-
                 const photoURL = spot.photo || "https://via.placeholder.com/400x250?text=Cafe";
                 const rating = spot.rating ? `⭐ ${spot.rating}` : "No rating";
-                const websiteURL = spot.website || "";
+                const mapsURL = spot.google_maps_url || "";
+                const websiteURL = spot.website_url || "";
 
-                const directionsClass = mapsURL ? "action-btn directions-btn" : "action-btn directions-btn btn-disabled";
-                const websiteClass = websiteURL ? "action-btn website-btn" : "action-btn website-btn btn-disabled";
-
-                // create card as DOM so we can attach listeners
                 const card = document.createElement("div");
                 card.className = "card";
 
@@ -304,37 +240,32 @@ async function loadSpots() {
                         <div class="card-title">${spot.name}</div>
                         <div class="card-info">${rating}</div>
                         <div class="card-actions">
-                            <a class="${directionsClass}">Directions</a>
-                            <a class="${websiteClass}">Website</a>
+                            <a class="action-btn directions-btn ${mapsURL ? "" : "btn-disabled"}">Directions</a>
+                            <a class="action-btn website-btn ${websiteURL ? "" : "btn-disabled"}">Website</a>
                         </div>
                     </div>
                 `;
 
-                // card click -> insights + maybe details
-                card.addEventListener("click", async (e) => {
-                    // avoid triggering when clicking buttons (they have own handlers)
+                card.addEventListener("click", (e) => {
                     if (e.target.closest(".action-btn")) return;
-                    await trackClick("card", spot);
-                    await openCard(spot);
+                    trackClick("view", spot);
                 });
 
-                // directions click
                 const directionsBtn = card.querySelector(".directions-btn");
-                if (directionsBtn && mapsURL) {
-                    directionsBtn.addEventListener("click", async (e) => {
+                if (mapsURL) {
+                    directionsBtn.addEventListener("click", (e) => {
                         e.stopPropagation();
-                        await trackClick("directions", spot);
                         window.open(mapsURL, "_blank", "noopener");
+                        trackClick("directions", spot);
                     });
                 }
 
-                // website click
                 const websiteBtn = card.querySelector(".website-btn");
-                if (websiteBtn && websiteURL) {
-                    websiteBtn.addEventListener("click", async (e) => {
+                if (websiteURL) {
+                    websiteBtn.addEventListener("click", (e) => {
                         e.stopPropagation();
-                        await trackClick("website", spot);
                         window.open(websiteURL, "_blank", "noopener");
+                        trackClick("details", spot);
                     });
                 }
 
@@ -343,11 +274,11 @@ async function loadSpots() {
 
         } catch (err) {
             console.error(err);
-            spotsContainer.innerHTML = '<p class="card-empty-message">Error fetching cafes.</p>';
+            spotsContainer.innerHTML = '<p class="empty-message">Error fetching cafes.</p>';
         }
 
     }, () => {
-        spotsContainer.innerHTML = '<p class="card-empty-message">Unable to retrieve your location.</p>';
+        spotsContainer.innerHTML = '<p class="empty-message">Unable to retrieve your location.</p>';
         spotsBox.classList.remove("hidden");
     });
 }

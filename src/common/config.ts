@@ -10,7 +10,8 @@ const CONFIGURATION = {
   GOOGLE_MAPS_API: {
     key: process.env.GOOGLE_MAPS_KEY,
     url: process.env.GOOGLE_MAPS_URL,
-    photos_url:  process.env.GOOGLE_PHOTOS_URL
+    photos_url:  process.env.GOOGLE_PHOTOS_URL,
+    details_url: process.env.GOOGLE_MAPS_DETAILS_URL
   },
   PROXY_SERVER: {
     userProxy: true,
